@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>日本退稅新制助手 (2026.11 事後退稅版)</title>
+  <title>日本退稅新制助手 (2026.11 事後退稅正式版)</title>
   <!-- Apple PWA 支援標籤 -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="日本退稅助手" />
+  <meta name="theme-color" content="#4f46e5" />
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -23,37 +24,37 @@
     }
   </script>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white transition-colors duration-200 touch-manipulation">
 
   <!-- 頂部導覽列 -->
-  <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+  <header class="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-red-600 text-white font-bold text-lg shadow-sm">JP</span>
         <div>
           <h1 class="text-base sm:text-lg font-bold tracking-tight leading-none">日本退稅新制助手</h1>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2026.11「先付後退」標準規範</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">2026.11「先付後退」防雷精算版</p>
         </div>
       </div>
 
       <button id="theme-toggle" type="button" aria-label="切換深淺色模式" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
-        <span id="theme-icon-dark" class="hidden text-sm font-medium">🌙 深色</span>
-        <span id="theme-icon-light" class="text-sm font-medium">☀️ 淺色</span>
+        <span id="theme-icon-dark" class="hidden text-xs sm:text-sm font-medium">🌙 深色</span>
+        <span id="theme-icon-light" class="text-xs sm:text-sm font-medium">☀️ 淺色</span>
       </button>
     </div>
 
     <!-- 功能切換導覽 (Tab Bar) -->
-    <nav aria-label="主要功能切換" class="max-w-4xl mx-auto px-4 sm:px-6 flex border-t border-slate-100 dark:border-slate-800/80">
-      <button type="button" onclick="switchTab('calc')" id="tab-btn-calc" aria-selected="true" class="tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-center transition">
+    <nav aria-label="主要功能切換" class="max-w-4xl mx-auto px-2 sm:px-6 flex border-t border-slate-100 dark:border-slate-800/80 overflow-x-auto">
+      <button type="button" onclick="switchTab('calc')" id="tab-btn-calc" aria-selected="true" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-center whitespace-nowrap transition">
         1. 湊單計算機
       </button>
-      <button type="button" onclick="switchTab('receipts')" id="tab-btn-receipts" aria-selected="false" class="tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center transition">
+      <button type="button" onclick="switchTab('receipts')" id="tab-btn-receipts" aria-selected="false" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition">
         2. 收據防雷清單 <span id="receipt-badge" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-slate-200 dark:bg-slate-800">0</span>
       </button>
-      <button type="button" onclick="switchTab('airport')" id="tab-btn-airport" aria-selected="false" class="tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center transition">
+      <button type="button" onclick="switchTab('airport')" id="tab-btn-airport" aria-selected="false" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition">
         3. 機場闖關決策
       </button>
-      <button type="button" onclick="switchTab('rules')" id="tab-btn-rules" aria-selected="false" class="tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center transition">
+      <button type="button" onclick="switchTab('rules')" id="tab-btn-rules" aria-selected="false" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition">
         4. 新舊制對照
       </button>
     </nav>
@@ -68,7 +69,7 @@
         <span class="text-lg leading-none">⚠️</span>
         <div>
           <strong class="font-bold">2026.11 新制核心：店內結帳先付「含稅全額」！</strong>
-          <p class="mt-1 text-amber-800 dark:text-amber-300">一般物品與消耗品已合併計算，同一家店單張收據<strong>未稅滿 5,000 日圓</strong>即可登記退稅，離境在機場刷護照確認後才退回信用卡/帳戶。</p>
+          <p class="mt-1 text-amber-800 dark:text-amber-300">一般物品與消耗品已合併計算，同一家店單張收據<strong>未稅滿 5,000 日圓</strong>即可登記退稅，離境在機場刷護照確認後才退回信用卡或指定帳戶。</p>
         </div>
       </div>
 
@@ -77,7 +78,9 @@
         <div class="md:col-span-7 bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-5">
           <div class="flex items-center justify-between">
             <h2 id="heading-calc" class="text-lg font-bold">購物籃金額輸入</h2>
-            <span class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">支援 10% 與 8% 混算</span>
+            <button type="button" onclick="clearCalculator()" class="text-xs px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium transition">
+              清空重算
+            </button>
           </div>
 
           <!-- 計價模式切換 -->
@@ -100,7 +103,7 @@
             </label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold">¥</span>
-              <input type="number" id="input-10" inputmode="numeric" min="0" placeholder="例如：4500" oninput="calculateTax()" class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-base font-semibold" />
+              <input type="number" id="input-10" inputmode="numeric" min="0" step="1" placeholder="例如：4500" oninput="calculateTax()" class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-base font-semibold" />
             </div>
           </div>
 
@@ -111,7 +114,20 @@
             </label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold">¥</span>
-              <input type="number" id="input-8" inputmode="numeric" min="0" placeholder="例如：1200" oninput="calculateTax()" class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-base font-semibold" />
+              <input type="number" id="input-8" inputmode="numeric" min="0" step="1" placeholder="例如：1200" oninput="calculateTax()" class="w-full pl-8 pr-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-base font-semibold" />
+            </div>
+          </div>
+
+          <!-- 分單結帳防呆勾選 -->
+          <div class="pt-1">
+            <label class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 cursor-pointer">
+              <input type="checkbox" id="check-consume-now" onchange="toggleConsumeWarning()" class="mt-0.5 accent-red-600 w-4 h-4 shrink-0" />
+              <span class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
+                這批商品中包含<strong>「打算在日本境內直接吃掉、喝掉或拆開穿戴」</strong>的物品？
+              </span>
+            </label>
+            <div id="consume-now-alert" class="hidden mt-2 p-3 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-xs text-red-800 dark:text-red-200 leading-relaxed">
+              🛑 <strong>強烈建議分開結帳！</strong>新制規定同一張收據只要有 1 件商品在日本境內被拆封或吃掉，<strong>整張收據的所有商品都會喪失退稅資格（連坐法）</strong>。請把要馬上用的商品拿出來單獨結帳（不退稅）！
             </div>
           </div>
 
@@ -119,7 +135,7 @@
           <div class="pt-3 border-t border-slate-200 dark:border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label for="input-rate" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">匯率換算 (1 日圓兌換)</label>
-              <input type="number" id="input-rate" step="0.001" value="0.052" oninput="calculateTax()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm font-medium" />
+              <input type="number" id="input-rate" step="0.001" min="0" value="0.052" oninput="calculateTax()" class="w-full px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm font-medium" />
               <p class="text-[11px] text-slate-400 mt-1">預設 0.052 (約 MOP/HKD)，台幣可改 0.21</p>
             </div>
             <div>
@@ -147,13 +163,13 @@
               <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                 <div id="progress-bar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
               </div>
-              <p id="status-desc" class="text-xs text-slate-600 dark:text-slate-300 mt-2">
-                距離未稅 ¥5,000 免稅門檻還差 <strong class="font-bold">¥5,000</strong>（含稅約 ¥5,500）
+              <p id="status-desc" class="text-xs text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
+                距離未稅 ¥5,000 免稅門檻還差 <strong class="font-bold">¥5,000</strong>
               </p>
             </div>
 
             <!-- 100萬日圓高價警示 -->
-            <div id="high-value-warning" class="hidden p-3.5 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-xs text-red-800 dark:text-red-200">
+            <div id="high-value-warning" class="hidden p-3.5 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-xs text-red-800 dark:text-red-200 leading-relaxed">
               🚨 <strong>高價品查驗警告：</strong>未稅總額已達 100 萬日圓以上，店家將向國稅廳申報詳細商品明細，機場海關極高機率亮「紅燈」要求人工逐件查驗，切勿將商品放入託運行李！
             </div>
 
@@ -179,21 +195,55 @@
                 <span class="font-bold text-emerald-700 dark:text-emerald-400">回國後預計實退金額</span>
                 <div class="text-right">
                   <div id="res-net-refund" class="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">¥0</div>
-                  <div id="res-net-fiat" class="text-xs text-slate-500 dark:text-slate-400">約 $0</div>
+                  <div id="res-net-fiat" class="text-xs text-slate-500 dark:text-slate-400">約 $0.0</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <button type="button" onclick="saveCalcToReceipt()" id="btn-save-receipt" disabled class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 text-white transition shadow-sm">
-            ＋ 將此筆紀錄加入「收據防雷清單」
-          </button>
+          <!-- 免原生 prompt 的直接儲存區 -->
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" id="calc-store-name" maxlength="40" placeholder="商店名稱 (例：松本清 新宿)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <select id="calc-platform" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <option value="退稅平台未指定">退稅平台：未指定</option>
+                <option value="Global Blue">Global Blue</option>
+                <option value="J-TaxRefund">J-TaxRefund</option>
+                <option value="Pie VAT">Pie VAT</option>
+                <option value="百貨直營櫃檯">百貨直營系統</option>
+              </select>
+            </div>
+            <button type="button" onclick="saveCalcToReceipt()" id="btn-save-receipt" disabled class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 text-white transition shadow-sm">
+              ＋ 將此筆試算加入「收據防雷清單」
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ==================== 模組 2：收據與連坐法防雷清單 ==================== -->
     <section id="panel-receipts" aria-labelledby="heading-receipts" class="hidden space-y-6">
+      <!-- 累計退稅總額看板 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <span class="text-xs font-semibold text-slate-400 uppercase">已登錄收據含稅總花費</span>
+          <div id="summary-total-spend" class="text-xl sm:text-2xl font-extrabold mt-1">¥0</div>
+          <p id="summary-receipt-count" class="text-xs text-slate-500 mt-1">共 0 張免稅收據</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-emerald-200 dark:border-emerald-900/60 shadow-sm">
+          <span class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase">目前安全可退回總額</span>
+          <div id="summary-safe-refund" class="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">¥0</div>
+          <p id="summary-safe-fiat" class="text-xs text-slate-500 mt-1">折合約 $0.0</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-red-200 dark:border-red-900/60 shadow-sm">
+          <span class="text-xs font-semibold text-red-600 dark:text-red-400 uppercase">因拆封/缺件連坐損失</span>
+          <div id="summary-lost-refund" class="text-xl sm:text-2xl font-extrabold text-red-600 dark:text-red-400 mt-1">¥0</div>
+          <p id="summary-lost-count" class="text-xs text-slate-500 mt-1">0 張收據失效風險</p>
+        </div>
+      </div>
+
       <div class="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-2xl p-4 text-xs sm:text-sm text-red-900 dark:text-red-200 flex gap-3 items-start">
         <span class="text-lg leading-none">💣</span>
         <div>
@@ -202,14 +252,21 @@
         </div>
       </div>
 
-      <!-- 新增收據表單 -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-800">
-        <h2 id="heading-receipts" class="text-base font-bold mb-4">手動新增免稅收據</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-          <input type="text" id="rec-store" placeholder="店名 (例：唐吉訶德道頓堀)" class="px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
-          <input type="number" id="rec-amount" placeholder="含稅金額 (¥)" class="px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
-          <input type="date" id="rec-date" class="px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
-          <button type="button" onclick="addManualReceipt()" class="py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
+      <!-- 手動新增收據表單 -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 id="heading-receipts" class="text-base font-bold">手動新增免稅收據</h2>
+          <span id="manual-error-msg" class="text-xs font-bold text-red-600 dark:text-red-400 hidden"></span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <input type="text" id="rec-store" maxlength="40" placeholder="店名 (例：唐吉訶德道頓堀)" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
+          <input type="number" id="rec-amount" min="0" step="1" placeholder="含稅總額 (¥)" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
+          <select id="rec-tax-type" class="sm:col-span-2 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium">
+            <option value="10">以 10% 為主 (滿¥5500)</option>
+            <option value="8">全 8% 食品 (滿¥5400)</option>
+          </select>
+          <input type="date" id="rec-date" class="sm:col-span-2 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs" />
+          <button type="button" onclick="addManualReceipt()" class="sm:col-span-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
             新增紀錄
           </button>
         </div>
@@ -245,22 +302,22 @@
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
             <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">改變 1</span>
             <h3 class="font-bold mt-2">結帳先付含稅價，機場確認後退稅</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">不再於店內直接折抵 10%。店內刷卡或付現皆為「含稅全額」，離境通過機場海關判定後，才退回綁定的信用卡或電子帳戶。</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">不再於店內直接折抵 10%。店內刷卡或付現皆為「含稅全額」，離境通過機場海關判定後，才退回綁定的信用卡或電子帳戶。</p>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
             <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">改變 2</span>
             <h3 class="font-bold mt-2">廢除密封袋、取消分類與50萬上限</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">衣服與零食藥妝直接合併計算滿未稅 5,000 日圓即可。不再使用防拆透明袋，方便收納進李箱，但<strong>出境前依然禁止在日本境內使用或食用</strong>。</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">衣服與零食藥妝直接合併計算滿未稅 5,000 日圓即可。不再使用防拆透明袋，方便收納進行李箱，但<strong>出境前依然禁止在日本境內使用或食用</strong>。</p>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
             <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-300">改變 3</span>
             <h3 class="font-bold mt-2">禁止自行郵寄（別送）免稅</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">自己去日本郵局寄回國的包裹一律不予退稅。若不想隨身手提去機場，唯一合法免稅途徑是由<strong>免稅店櫃檯直接辦理「海外直送」</strong>。</p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">自己去日本郵局寄回國的包裹一律不予退稅。若不想隨身手提去機場，唯一合法免稅途徑是由<strong>免稅店櫃檯直接辦理「海外直送」</strong>。</p>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
             <span class="text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 dark:bg-red-900/60 dark:text-red-300">改變 4</span>
-            <h3 class="font-bold mt-2">高價商品要拆開結帳？</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">因為「同一張收據少一件就整單取消退稅」，建議把「會在日本境內馬上穿的衣服/吃的零食」跟「要帶回國退稅的商品」<strong>分開結帳</strong>！</p>
+            <h3 class="font-bold mt-2">境內即用商品務必「分單結帳」</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">因為「同一張收據少一件就整單取消退稅」，請務必把「會在日本境內馬上穿的衣服/吃的零食」跟「要帶回國退稅的商品」<strong>分開結帳</strong>！</p>
           </div>
         </div>
       </div>
@@ -277,6 +334,22 @@
 
   <!-- 核心互動邏輯 JavaScript -->
   <script>
+    // 0. 資安與時區輔助函式 (修補 DOM XSS 與 UTC 日期偏差)
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+
+    function getLocalDateStr(dateObj = new Date()) {
+      const offset = dateObj.getTimezoneOffset() * 60000;
+      return new Date(dateObj.getTime() - offset).toISOString().split('T')[0];
+    }
+
     // 1. 深色模式切換
     const themeToggleBtn = document.getElementById('theme-toggle');
     const iconDark = document.getElementById('theme-icon-dark');
@@ -313,17 +386,17 @@
         if (t === tabName) {
           panel.classList.remove('hidden');
           btn.setAttribute('aria-selected', 'true');
-          btn.className = 'tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-center transition';
+          btn.className = 'tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-center whitespace-nowrap transition';
         } else {
           panel.classList.add('hidden');
           btn.setAttribute('aria-selected', 'false');
-          btn.className = 'tab-btn flex-1 py-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center transition';
+          btn.className = 'tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition';
         }
       });
     }
 
-    // 3. 退稅計算機邏輯
-    let priceMode = 'taxIn'; // 'taxIn' 或 'taxEx'
+    // 3. 退稅計算機邏輯 (修正 JS 浮點數精度誤差)
+    let priceMode = 'taxIn';
     let currentCalcSummary = { exTotal: 0, inTotal: 0, netRefund: 0 };
 
     function setPriceMode(mode) {
@@ -340,38 +413,57 @@
       calculateTax();
     }
 
+    function toggleConsumeWarning() {
+      const checked = document.getElementById('check-consume-now').checked;
+      const alertBox = document.getElementById('consume-now-alert');
+      if (checked) {
+        alertBox.classList.remove('hidden');
+      } else {
+        alertBox.classList.add('hidden');
+      }
+    }
+
+    function clearCalculator() {
+      document.getElementById('input-10').value = '';
+      document.getElementById('input-8').value = '';
+      document.getElementById('calc-store-name').value = '';
+      document.getElementById('check-consume-now').checked = false;
+      toggleConsumeWarning();
+      calculateTax();
+    }
+
     function calculateTax() {
-      const val10 = parseFloat(document.getElementById('input-10').value) || 0;
-      const val8 = parseFloat(document.getElementById('input-8').value) || 0;
-      const rate = parseFloat(document.getElementById('input-rate').value) || 0.052;
-      const feeRate = parseFloat(document.getElementById('input-fee').value) || 0;
+      const val10 = Math.max(0, Math.floor(parseFloat(document.getElementById('input-10').value) || 0));
+      const val8 = Math.max(0, Math.floor(parseFloat(document.getElementById('input-8').value) || 0));
+      const rate = Math.max(0, parseFloat(document.getElementById('input-rate').value) || 0.052);
+      const feeRate = Math.max(0, parseFloat(document.getElementById('input-fee').value) || 0);
 
       document.getElementById('fee-display').textContent = `${feeRate.toFixed(1)}%`;
 
       let ex10 = 0, in10 = 0, ex8 = 0, in8 = 0;
 
+      // 採用整數乘除避免 JS 浮點數誤差 (例如 1100 / 1.1 = 999.9999999999999)
       if (priceMode === 'taxIn') {
         in10 = val10;
-        ex10 = Math.ceil(val10 / 1.10);
+        ex10 = Math.ceil((val10 * 100) / 110);
         in8 = val8;
-        ex8 = Math.ceil(val8 / 1.08);
+        ex8 = Math.ceil((val8 * 100) / 108);
       } else {
         ex10 = val10;
-        in10 = Math.floor(val10 * 1.10);
+        in10 = val10 + Math.floor((val10 * 10) / 100);
         ex8 = val8;
-        in8 = Math.floor(val8 * 1.08);
+        in8 = val8 + Math.floor((val8 * 8) / 100);
       }
 
       const exTotal = ex10 + ex8;
       const inTotal = in10 + in8;
       const rawTax = inTotal - exTotal;
-      const feeAmount = Math.round(exTotal * (feeRate / 100));
+      const feeAmount = Math.round((exTotal * feeRate) / 100);
       const eligible = exTotal >= 5000;
       const netRefund = eligible ? Math.max(0, rawTax - feeAmount) : 0;
 
       currentCalcSummary = { exTotal, inTotal, netRefund };
 
-      // 更新數字顯示
       document.getElementById('res-ex-total').textContent = `¥${exTotal.toLocaleString()}`;
       document.getElementById('res-in-total').textContent = `¥${inTotal.toLocaleString()}`;
       document.getElementById('res-raw-tax').textContent = `¥${rawTax.toLocaleString()}`;
@@ -379,7 +471,6 @@
       document.getElementById('res-net-refund').textContent = `¥${netRefund.toLocaleString()}`;
       document.getElementById('res-net-fiat').textContent = `約 $${(netRefund * rate).toFixed(1)}`;
 
-      // 更新進度條與狀態
       const pct = Math.min(100, Math.round((exTotal / 5000) * 100));
       const progressBar = document.getElementById('progress-bar');
       const statusTitle = document.getElementById('status-title');
@@ -398,26 +489,36 @@
         saveBtn.disabled = false;
       } else {
         const diffEx = 5000 - exTotal;
-        const diffIn10 = Math.ceil(diffEx * 1.10);
+        const diffIn10 = diffEx + Math.floor((diffEx * 10) / 100);
+        const diffIn8 = diffEx + Math.floor((diffEx * 8) / 100);
         progressBar.className = 'h-full bg-indigo-600 transition-all duration-300';
         statusTitle.textContent = '⏳ 尚未達免稅門檻';
         statusTitle.className = 'text-sm font-bold text-slate-800 dark:text-slate-200';
-        statusDesc.innerHTML = `還差未稅 <strong class="text-indigo-600 dark:text-indigo-400">¥${diffEx.toLocaleString()}</strong>（若買 10% 商品約含稅 <strong>¥${diffIn10.toLocaleString()}</strong>）`;
+        statusDesc.innerHTML = `還差未稅 <strong class="text-indigo-600 dark:text-indigo-400">¥${diffEx.toLocaleString()}</strong>（再湊 10% 商品含稅 <strong>¥${diffIn10.toLocaleString()}</strong> 或 8% 食品含稅 <strong>¥${diffIn8.toLocaleString()}</strong>）`;
         saveBtn.disabled = true;
       }
 
-      // 100萬日圓高價警示
       const highWarn = document.getElementById('high-value-warning');
       if (exTotal >= 1000000) {
         highWarn.classList.remove('hidden');
       } else {
         highWarn.classList.add('hidden');
       }
+
+      // 同步更新收據分頁的外幣匯率顯示
+      renderReceipts();
     }
 
-    // 4. 收據防雷清單 (LocalStorage)
-    let receipts = JSON.parse(localStorage.getItem('jp_tax_receipts_2026') || '[]');
-    document.getElementById('rec-date').valueAsDate = new Date();
+    // 4. 收據防雷清單與總額看板 (LocalStorage)
+    let receipts = [];
+    try {
+      receipts = JSON.parse(localStorage.getItem('jp_tax_receipts_2026') || '[]');
+      if (!Array.isArray(receipts)) receipts = [];
+    } catch (e) {
+      receipts = [];
+    }
+
+    document.getElementById('rec-date').value = getLocalDateStr();
 
     function saveReceipts() {
       localStorage.setItem('jp_tax_receipts_2026', JSON.stringify(receipts));
@@ -426,36 +527,52 @@
 
     function saveCalcToReceipt() {
       if (currentCalcSummary.exTotal < 5000) return;
-      const storeName = prompt('請輸入商店名稱（例如：松本清 新宿店）：', '免稅商店');
-      if (!storeName) return;
+      const storeInput = document.getElementById('calc-store-name').value.trim();
+      const platformInput = document.getElementById('calc-platform').value;
+      const storeName = storeInput || '免稅商店 (計算機轉入)';
 
       receipts.unshift({
         id: Date.now(),
         store: storeName,
+        platform: platformInput,
         inAmount: currentCalcSummary.inTotal,
         refund: currentCalcSummary.netRefund,
-        date: new Date().toISOString().split('T')[0],
+        date: getLocalDateStr(),
         unopened: true,
         allPresent: true
       });
+
+      document.getElementById('calc-store-name').value = '';
       saveReceipts();
       switchTab('receipts');
     }
 
     function addManualReceipt() {
-      const store = document.getElementById('rec-store').value.trim() || '未命名商店';
-      const amount = parseFloat(document.getElementById('rec-amount').value) || 0;
-      const date = document.getElementById('rec-date').value || new Date().toISOString().split('T')[0];
+      const store = document.getElementById('rec-store').value.trim() || '未命名免稅店';
+      const amount = Math.floor(parseFloat(document.getElementById('rec-amount').value) || 0);
+      const taxType = document.getElementById('rec-tax-type').value;
+      const date = document.getElementById('rec-date').value || getLocalDateStr();
+      const errEl = document.getElementById('manual-error-msg');
+      const feeRate = Math.max(0, parseFloat(document.getElementById('input-fee').value) || 2.0);
 
-      if (amount < 5400) {
-        alert('含稅金額低於 ¥5,400（未稅 ¥5,000），不符合日本免稅資格！');
+      const minInRequired = taxType === '10' ? 5500 : 5400;
+      const exCalc = taxType === '10' ? Math.ceil((amount * 100) / 110) : Math.ceil((amount * 100) / 108);
+
+      if (exCalc < 5000) {
+        errEl.textContent = `⚠️ 金額不足！${taxType}% 商品含稅至少需滿 ¥${minInRequired.toLocaleString()} (未稅 ¥5,000) 才能退稅。`;
+        errEl.classList.remove('hidden');
         return;
       }
 
-      const estRefund = Math.round((amount - Math.ceil(amount / 1.1)) * 0.8);
+      errEl.classList.add('hidden');
+      const rawTax = amount - exCalc;
+      const feeAmount = Math.round((exCalc * feeRate) / 100);
+      const estRefund = Math.max(0, rawTax - feeAmount);
+
       receipts.unshift({
         id: Date.now(),
         store,
+        platform: '手動登錄',
         inAmount: amount,
         refund: estRefund,
         date,
@@ -481,51 +598,87 @@
     function renderReceipts() {
       const listEl = document.getElementById('receipt-list');
       const badgeEl = document.getElementById('receipt-badge');
+      const rate = Math.max(0, parseFloat(document.getElementById('input-rate').value) || 0.052);
+
       badgeEl.textContent = receipts.length;
+
+      // 計算頂部總計看板
+      let totalSpend = 0;
+      let safeRefund = 0;
+      let lostRefund = 0;
+      let lostCount = 0;
+
+      receipts.forEach(r => {
+        const inAmt = Number(r.inAmount) || 0;
+        const refAmt = Number(r.refund) || 0;
+        totalSpend += inAmt;
+        if (r.unopened && r.allPresent) {
+          safeRefund += refAmt;
+        } else {
+          lostRefund += refAmt;
+          lostCount += 1;
+        }
+      });
+
+      document.getElementById('summary-total-spend').textContent = `¥${totalSpend.toLocaleString()}`;
+      document.getElementById('summary-receipt-count').textContent = `共 ${receipts.length} 張免稅收據`;
+      document.getElementById('summary-safe-refund').textContent = `¥${safeRefund.toLocaleString()}`;
+      document.getElementById('summary-safe-fiat').textContent = `折合約 $${(safeRefund * rate).toFixed(1)}`;
+      document.getElementById('summary-lost-refund').textContent = `-¥${lostRefund.toLocaleString()}`;
+      document.getElementById('summary-lost-count').textContent = `${lostCount} 張收據因連坐失效`;
 
       if (receipts.length === 0) {
         listEl.innerHTML = `
           <div class="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 text-slate-400 text-sm">
-            目前尚無收據紀錄，可從「湊單計算機」一鍵加入或上方手動新增。
+            目前尚無收據紀錄，可從「湊單計算機」直接加入或由上方手動新增。
           </div>`;
         return;
       }
 
       listEl.innerHTML = receipts.map(r => {
-        // 計算購買日起 90 天期限
-        const buyDate = new Date(r.date);
-        const deadline = new Date(buyDate);
-        deadline.setDate(deadline.getDate() + 90);
-        const deadlineStr = deadline.toISOString().split('T')[0];
-        const isSafe = r.unopened && r.allPresent;
+        const safeDateStr = /^\d{4}-\d{2}-\d{2}$/.test(r.date) ? r.date : getLocalDateStr();
+        const [y, m, d] = safeDateStr.split('-').map(Number);
+        const deadlineDate = new Date(y, m - 1, d + 90);
+        const deadlineStr = getLocalDateStr(deadlineDate);
+        const isSafe = Boolean(r.unopened && r.allPresent);
+
+        const safeStore = escapeHTML(r.store || '未命名商店');
+        const safePlatform = escapeHTML(r.platform || '未指定');
+        const inAmountNum = Number(r.inAmount) || 0;
+        const refundNum = Number(r.refund) || 0;
+        const itemId = Number(r.id) || 0;
 
         return `
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-sm border ${isSafe ? 'border-slate-200 dark:border-slate-800' : 'border-red-500 dark:border-red-500 bg-red-50/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-sm border ${isSafe ? 'border-slate-200 dark:border-slate-800' : 'border-red-500 dark:border-red-500 bg-red-50/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition">
             <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-base">${r.store}</span>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-bold text-base">${safeStore}</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">${safePlatform}</span>
                 <span class="text-xs px-2 py-0.5 rounded-full ${isSafe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'} font-semibold">
-                  ${isSafe ? '✅ 符合退稅資格' : '❌ 整張收據將失效'}
+                  ${isSafe ? '✅ 符合退稅資格' : '❌ 觸發連坐：整張失效'}
                 </span>
               </div>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                購買日：${r.date} ｜ 必須於 <strong>${deadlineStr}</strong> 前帶出境
+                購買日：${safeDateStr} ｜ 90天出境期限：<strong>${deadlineStr}</strong>
               </p>
               <p class="text-sm font-semibold">
-                實付含稅：¥${r.inAmount.toLocaleString()} <span class="text-emerald-600 dark:text-emerald-400 ml-2">(預估退 ¥${r.refund.toLocaleString()})</span>
+                實付含稅：¥${inAmountNum.toLocaleString()}
+                <span class="${isSafe ? 'text-emerald-600 dark:text-emerald-400' : 'line-through text-red-500'} ml-2">
+                  (預估退 ¥${refundNum.toLocaleString()})
+                </span>
               </p>
             </div>
 
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 text-xs">
-              <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer">
-                <input type="checkbox" ${r.unopened ? 'checked' : ''} onchange="toggleReceiptCheck(${r.id}, 'unopened')" class="accent-indigo-600 w-4 h-4" />
-                <span>境內未拆封使用</span>
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 text-xs">
+              <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer select-none">
+                <input type="checkbox" ${r.unopened ? 'checked' : ''} onchange="toggleReceiptCheck(${itemId}, 'unopened')" class="accent-indigo-600 w-4 h-4" />
+                <span>境內未拆封</span>
               </label>
-              <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer">
-                <input type="checkbox" ${r.allPresent ? 'checked' : ''} onchange="toggleReceiptCheck(${r.id}, 'allPresent')" class="accent-indigo-600 w-4 h-4" />
-                <span>全數商品齊全隨身</span>
+              <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer select-none">
+                <input type="checkbox" ${r.allPresent ? 'checked' : ''} onchange="toggleReceiptCheck(${itemId}, 'allPresent')" class="accent-indigo-600 w-4 h-4" />
+                <span>全數隨身齊全</span>
               </label>
-              <button type="button" onclick="deleteReceipt(${r.id})" class="p-2 text-slate-400 hover:text-red-500 transition" title="刪除">
+              <button type="button" onclick="deleteReceipt(${itemId})" class="p-2 text-slate-400 hover:text-red-500 transition" title="刪除此筆收據" aria-label="刪除此筆收據">
                 🗑️
               </button>
             </div>
@@ -545,7 +698,7 @@
       },
       fail_checked: {
         q: '🚨 嚴重順序錯誤警告！',
-        desc: '2026.11 新制規定：必須「先完成海關退稅判定，後託運行李」。如果你等一下刷護照抽中「綠燈」還好；但一旦抽中「紅燈（需人工查驗商品）」，因為你的商品已經託運無法拿出來給海關看，包含該商品的整張收據將直接喪失退稅資格！快去確認能否先去刷海關機台！',
+        desc: '2026.11 新制規定：必須「先完成海關退稅判定，後託運行李」。如果你等一下刷護照抽中「綠燈」還好；但一旦抽中「紅燈（需人工查驗商品）」，因為你的商品已經託運無法拿出來給海關看，包含該商品的整張收據將直接喪失退稅資格！快去海關機台刷護照確認結果！',
         options: [{ text: '好，我立刻去海關機台刷護照看看結果', next: 'step2', style: 'bg-slate-800 text-white' }]
       },
       step2: {
@@ -591,7 +744,6 @@
 
     // 初始化渲染
     calculateTax();
-    renderReceipts();
     renderFlowStep('start');
   </script>
 </body>
