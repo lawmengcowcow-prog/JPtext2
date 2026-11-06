@@ -49,7 +49,7 @@
         1. 湊單計算機
       </button>
       <button type="button" onclick="switchTab('receipts')" id="tab-btn-receipts" aria-selected="false" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition">
-        2. 收據防雷清單 <span id="receipt-badge" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-slate-200 dark:bg-slate-800">0</span>
+        2. 收據拍照防雷 <span id="receipt-badge" class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-slate-200 dark:bg-slate-800">0</span>
       </button>
       <button type="button" onclick="switchTab('airport')" id="tab-btn-airport" aria-selected="false" class="tab-btn flex-1 py-3 px-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-center whitespace-nowrap transition">
         3. 機場闖關決策
@@ -201,10 +201,13 @@
             </div>
           </div>
 
-          <!-- 免原生 prompt 的直接儲存區 -->
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+          <!-- 計算機直接儲存區 (支援收據號碼與拍照) -->
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2.5">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input type="text" id="calc-store-name" maxlength="40" placeholder="商店名稱 (例：松本清 新宿)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <input type="text" id="calc-store-name" maxlength="40" placeholder="店名 (例：松本清 新宿)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+              <input type="text" id="calc-receipt-no" maxlength="40" placeholder="收據號碼/退稅單號 (選填)" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
               <select id="calc-platform" class="px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 <option value="退稅平台未指定">退稅平台：未指定</option>
                 <option value="Global Blue">Global Blue</option>
@@ -212,9 +215,25 @@
                 <option value="Pie VAT">Pie VAT</option>
                 <option value="百貨直營櫃檯">百貨直營系統</option>
               </select>
+
+              <!-- 計算機端拍照按鈕 -->
+              <label class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold cursor-pointer transition border border-slate-300 dark:border-slate-700">
+                <span>📷</span>
+                <span id="calc-photo-label">拍照備份收據</span>
+                <input type="file" id="calc-photo-input" accept="image/*" capture="environment" onchange="handlePhotoSelect(event, 'calc')" class="hidden" />
+              </label>
             </div>
+            <!-- 計算機照片預覽小圖 -->
+            <div id="calc-photo-preview-box" class="hidden flex items-center justify-between p-2 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-xs">
+              <div class="flex items-center gap-2">
+                <img id="calc-photo-preview" src="" alt="收據預覽" class="w-10 h-10 object-cover rounded-lg border border-slate-300" />
+                <span class="text-indigo-700 dark:text-indigo-300 font-medium">已壓縮載入收據照片</span>
+              </div>
+              <button type="button" onclick="clearPendingPhoto('calc')" class="text-red-500 hover:text-red-700 font-bold px-2">✕ 移除</button>
+            </div>
+
             <button type="button" onclick="saveCalcToReceipt()" id="btn-save-receipt" disabled class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 text-white transition shadow-sm">
-              ＋ 將此筆試算加入「收據防雷清單」
+              ＋ 將此筆試算與照片加入「收據清單」
             </button>
           </div>
         </div>
@@ -244,31 +263,57 @@
         </div>
       </div>
 
-      <div class="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 rounded-2xl p-4 text-xs sm:text-sm text-red-900 dark:text-red-200 flex gap-3 items-start">
-        <span class="text-lg leading-none">💣</span>
-        <div>
-          <strong class="font-bold">單張收據「連坐法」警告：少一件，整張收據退稅報銷！</strong>
-          <p class="mt-1 text-red-800 dark:text-red-300">海關查驗以「單張收據」為單位。若同一張收據中有 10 件商品，只要你在日本境內<strong>偷吃掉 1 包零食、弄丟 1 支筆，或把其中 1 件塞進已託運行李</strong>，整張收據將全部不予退稅！</p>
+      <!-- 手動新增收據表單 (含收據號碼與拍照備份) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 id="heading-receipts" class="text-base font-bold">手動新增免稅收據 & 拍照備份</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">照片經本地端自動壓縮存於手機瀏覽器，不會上傳至任何外部伺服器</p>
+          </div>
+          <span id="storage-usage" class="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+            本地儲存空間：計算中...
+          </span>
         </div>
-      </div>
 
-      <!-- 手動新增收據表單 -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 id="heading-receipts" class="text-base font-bold">手動新增免稅收據</h2>
-          <span id="manual-error-msg" class="text-xs font-bold text-red-600 dark:text-red-400 hidden"></span>
-        </div>
+        <div id="manual-error-msg" class="hidden p-3 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-300 dark:border-red-800 text-xs font-bold text-red-600 dark:text-red-400"></div>
+
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-          <input type="text" id="rec-store" maxlength="40" placeholder="店名 (例：唐吉訶德道頓堀)" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
+          <input type="text" id="rec-store" maxlength="40" placeholder="店名 (例：唐吉訶德道頓堀)" class="sm:col-span-4 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
+          <input type="text" id="rec-no" maxlength="40" placeholder="收據號碼 / 退稅單號 (選填)" class="sm:col-span-4 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
+          <select id="rec-platform" class="sm:col-span-4 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium">
+            <option value="退稅平台未指定">退稅平台：未指定</option>
+            <option value="Global Blue">Global Blue</option>
+            <option value="J-TaxRefund">J-TaxRefund</option>
+            <option value="Pie VAT">Pie VAT</option>
+            <option value="百貨直營櫃檯">百貨直營系統</option>
+          </select>
+
           <input type="number" id="rec-amount" min="0" step="1" placeholder="含稅總額 (¥)" class="sm:col-span-3 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm" />
-          <select id="rec-tax-type" class="sm:col-span-2 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium">
+          <select id="rec-tax-type" class="sm:col-span-3 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-medium">
             <option value="10">以 10% 為主 (滿¥5500)</option>
             <option value="8">全 8% 食品 (滿¥5400)</option>
           </select>
           <input type="date" id="rec-date" class="sm:col-span-2 px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs" />
+
+          <!-- 手動表單拍照按鈕 -->
+          <label class="sm:col-span-2 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold cursor-pointer transition border border-slate-300 dark:border-slate-700">
+            <span>📷</span>
+            <span id="manual-photo-label">拍收據</span>
+            <input type="file" id="manual-photo-input" accept="image/*" capture="environment" onchange="handlePhotoSelect(event, 'manual')" class="hidden" />
+          </label>
+
           <button type="button" onclick="addManualReceipt()" class="sm:col-span-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm transition">
-            新增紀錄
+            ＋ 新增
           </button>
+        </div>
+
+        <!-- 手動表單照片預覽 -->
+        <div id="manual-photo-preview-box" class="hidden flex items-center justify-between p-2.5 rounded-xl bg-indigo-50/60 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-xs">
+          <div class="flex items-center gap-2.5">
+            <img id="manual-photo-preview" src="" alt="收據預覽" class="w-12 h-12 object-cover rounded-lg border border-slate-300" />
+            <span>已準備好收據照片（將隨新增按鈕一併儲存於手機內）</span>
+          </div>
+          <button type="button" onclick="clearPendingPhoto('manual')" class="text-red-500 hover:text-red-700 font-bold px-2">✕ 移除照片</button>
         </div>
       </div>
 
@@ -325,10 +370,26 @@
 
   </main>
 
+  <!-- 收據照片放大檢視燈箱 (Modal) -->
+  <div id="photo-modal" onclick="closePhotoModal()" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative max-w-lg w-full bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+        <h3 id="modal-title" class="text-sm font-bold truncate">收據照片備份</h3>
+        <button type="button" onclick="closePhotoModal()" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-bold">✕ 關閉</button>
+      </div>
+      <div class="p-3 bg-slate-950 flex justify-center max-h-[75vh] overflow-auto">
+        <img id="modal-img" src="" alt="收據原圖" class="max-w-full h-auto rounded" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 列表單筆補拍專用隱藏 input -->
+  <input type="file" id="reupload-photo-input" accept="image/*" capture="environment" onchange="handleReuploadPhoto(event)" class="hidden" />
+
   <!-- 底部資訊列 -->
   <footer class="border-t border-slate-200 dark:border-slate-800 py-5 text-center text-xs text-slate-500 dark:text-slate-400">
     <div class="max-w-4xl mx-auto px-4">
-      資料儲存於您的手機瀏覽器本地端 (LocalStorage)，離線可正常使用。實際退稅金額以日本海關及各退稅平台最終核定為準。
+      資料與收據壓縮照片完全儲存於您的手機瀏覽器本地端 (LocalStorage)，離線可正常調閱。
     </div>
   </footer>
 
@@ -348,6 +409,115 @@
     function getLocalDateStr(dateObj = new Date()) {
       const offset = dateObj.getTimezoneOffset() * 60000;
       return new Date(dateObj.getTime() - offset).toISOString().split('T')[0];
+    }
+
+    // 0.5 手機拍照自動壓縮引擎 (將數 MB 原圖壓縮至約 50KB Base64，防止 localStorage 爆滿)
+    let pendingPhotoCalc = null;
+    let pendingPhotoManual = null;
+    let currentReuploadReceiptId = null;
+
+    function compressImageFile(file, maxWidth = 800, quality = 0.65) {
+      return new Promise((resolve, reject) => {
+        if (!file || !file.type.startsWith('image/')) {
+          reject(new Error('請選擇有效的圖片檔案'));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            resolve(dataUrl);
+          };
+          img.onerror = () => reject(new Error('圖片載入失敗'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('檔案讀取失敗'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handlePhotoSelect(event, source) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        const compressedBase64 = await compressImageFile(file);
+        if (source === 'calc') {
+          pendingPhotoCalc = compressedBase64;
+          document.getElementById('calc-photo-preview').src = compressedBase64;
+          document.getElementById('calc-photo-preview-box').classList.remove('hidden');
+          document.getElementById('calc-photo-label').textContent = '更換收據照片';
+        } else {
+          pendingPhotoManual = compressedBase64;
+          document.getElementById('manual-photo-preview').src = compressedBase64;
+          document.getElementById('manual-photo-preview-box').classList.remove('hidden');
+          document.getElementById('manual-photo-label').textContent = '已選取';
+        }
+      } catch (err) {
+        alert('照片處理失敗：' + err.message);
+      }
+    }
+
+    function clearPendingPhoto(source) {
+      if (source === 'calc') {
+        pendingPhotoCalc = null;
+        document.getElementById('calc-photo-input').value = '';
+        document.getElementById('calc-photo-preview-box').classList.add('hidden');
+        document.getElementById('calc-photo-label').textContent = '拍照備份收據';
+      } else {
+        pendingPhotoManual = null;
+        document.getElementById('manual-photo-input').value = '';
+        document.getElementById('manual-photo-preview-box').classList.add('hidden');
+        document.getElementById('manual-photo-label').textContent = '拍收據';
+      }
+    }
+
+    // 針對既有收據補拍照片
+    function triggerReuploadPhoto(receiptId) {
+      currentReuploadReceiptId = receiptId;
+      const input = document.getElementById('reupload-photo-input');
+      input.value = '';
+      input.click();
+    }
+
+    async function handleReuploadPhoto(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file || !currentReuploadReceiptId) return;
+      try {
+        const compressedBase64 = await compressImageFile(file);
+        receipts = receipts.map(r => r.id === currentReuploadReceiptId ? { ...r, photo: compressedBase64 } : r);
+        saveReceipts();
+      } catch (err) {
+        alert('補拍照片失敗：' + err.message);
+      } finally {
+        currentReuploadReceiptId = null;
+      }
+    }
+
+    // 燈箱檢視照片
+    function openPhotoModal(id) {
+      const target = receipts.find(r => r.id === id);
+      if (!target || !target.photo) return;
+      const titleText = `${target.store || '商店'} ${target.receiptNo ? `(單號: ${target.receiptNo})` : ''}`;
+      document.getElementById('modal-title').textContent = titleText;
+      document.getElementById('modal-img').src = target.photo;
+      document.getElementById('photo-modal').classList.remove('hidden');
+    }
+
+    function closePhotoModal() {
+      document.getElementById('photo-modal').classList.add('hidden');
+      document.getElementById('modal-img').src = '';
     }
 
     // 1. 深色模式切換
@@ -395,7 +565,7 @@
       });
     }
 
-    // 3. 退稅計算機邏輯 (修正 JS 浮點數精度誤差)
+    // 3. 退稅計算機邏輯
     let priceMode = 'taxIn';
     let currentCalcSummary = { exTotal: 0, inTotal: 0, netRefund: 0 };
 
@@ -427,7 +597,9 @@
       document.getElementById('input-10').value = '';
       document.getElementById('input-8').value = '';
       document.getElementById('calc-store-name').value = '';
+      document.getElementById('calc-receipt-no').value = '';
       document.getElementById('check-consume-now').checked = false;
+      clearPendingPhoto('calc');
       toggleConsumeWarning();
       calculateTax();
     }
@@ -442,7 +614,6 @@
 
       let ex10 = 0, in10 = 0, ex8 = 0, in8 = 0;
 
-      // 採用整數乘除避免 JS 浮點數誤差 (例如 1100 / 1.1 = 999.9999999999999)
       if (priceMode === 'taxIn') {
         in10 = val10;
         ex10 = Math.ceil((val10 * 100) / 110);
@@ -505,11 +676,10 @@
         highWarn.classList.add('hidden');
       }
 
-      // 同步更新收據分頁的外幣匯率顯示
       renderReceipts();
     }
 
-    // 4. 收據防雷清單與總額看板 (LocalStorage)
+    // 4. 收據防雷清單與本地容量監控 (LocalStorage)
     let receipts = [];
     try {
       receipts = JSON.parse(localStorage.getItem('jp_tax_receipts_2026') || '[]');
@@ -520,35 +690,59 @@
 
     document.getElementById('rec-date').value = getLocalDateStr();
 
+    function updateStorageUsage() {
+      const raw = localStorage.getItem('jp_tax_receipts_2026') || '';
+      const kb = Math.round((raw.length * 2) / 1024);
+      const maxKb = 5120; // 約 5MB
+      const pct = Math.min(100, ((kb / maxKb) * 100).toFixed(1));
+      const el = document.getElementById('storage-usage');
+      if (el) {
+        el.textContent = `本地容量已用：${kb} KB (${pct}%)`;
+      }
+    }
+
     function saveReceipts() {
-      localStorage.setItem('jp_tax_receipts_2026', JSON.stringify(receipts));
+      try {
+        localStorage.setItem('jp_tax_receipts_2026', JSON.stringify(receipts));
+      } catch (e) {
+        alert('手機瀏覽器本地儲存空間已滿（5MB 上限）！請刪除部分舊收據或移除部分照片。');
+        return;
+      }
+      updateStorageUsage();
       renderReceipts();
     }
 
     function saveCalcToReceipt() {
       if (currentCalcSummary.exTotal < 5000) return;
       const storeInput = document.getElementById('calc-store-name').value.trim();
+      const receiptNoInput = document.getElementById('calc-receipt-no').value.trim();
       const platformInput = document.getElementById('calc-platform').value;
       const storeName = storeInput || '免稅商店 (計算機轉入)';
 
       receipts.unshift({
         id: Date.now(),
         store: storeName,
+        receiptNo: receiptNoInput,
         platform: platformInput,
         inAmount: currentCalcSummary.inTotal,
         refund: currentCalcSummary.netRefund,
         date: getLocalDateStr(),
+        photo: pendingPhotoCalc || null,
         unopened: true,
         allPresent: true
       });
 
       document.getElementById('calc-store-name').value = '';
+      document.getElementById('calc-receipt-no').value = '';
+      clearPendingPhoto('calc');
       saveReceipts();
       switchTab('receipts');
     }
 
     function addManualReceipt() {
       const store = document.getElementById('rec-store').value.trim() || '未命名免稅店';
+      const receiptNo = document.getElementById('rec-no').value.trim();
+      const platform = document.getElementById('rec-platform').value;
       const amount = Math.floor(parseFloat(document.getElementById('rec-amount').value) || 0);
       const taxType = document.getElementById('rec-tax-type').value;
       const date = document.getElementById('rec-date').value || getLocalDateStr();
@@ -572,16 +766,20 @@
       receipts.unshift({
         id: Date.now(),
         store,
-        platform: '手動登錄',
+        receiptNo,
+        platform,
         inAmount: amount,
         refund: estRefund,
         date,
+        photo: pendingPhotoManual || null,
         unopened: true,
         allPresent: true
       });
 
       document.getElementById('rec-store').value = '';
+      document.getElementById('rec-no').value = '';
       document.getElementById('rec-amount').value = '';
+      clearPendingPhoto('manual');
       saveReceipts();
     }
 
@@ -601,8 +799,8 @@
       const rate = Math.max(0, parseFloat(document.getElementById('input-rate').value) || 0.052);
 
       badgeEl.textContent = receipts.length;
+      updateStorageUsage();
 
-      // 計算頂部總計看板
       let totalSpend = 0;
       let safeRefund = 0;
       let lostRefund = 0;
@@ -630,7 +828,7 @@
       if (receipts.length === 0) {
         listEl.innerHTML = `
           <div class="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 text-slate-400 text-sm">
-            目前尚無收據紀錄，可從「湊單計算機」直接加入或由上方手動新增。
+            目前尚無收據紀錄，可從「湊單計算機」直接加入或由上方手動新增與拍照。
           </div>`;
         return;
       }
@@ -643,33 +841,51 @@
         const isSafe = Boolean(r.unopened && r.allPresent);
 
         const safeStore = escapeHTML(r.store || '未命名商店');
+        const safeReceiptNo = r.receiptNo ? escapeHTML(r.receiptNo) : '';
         const safePlatform = escapeHTML(r.platform || '未指定');
         const inAmountNum = Number(r.inAmount) || 0;
         const refundNum = Number(r.refund) || 0;
         const itemId = Number(r.id) || 0;
+        const hasPhoto = Boolean(r.photo && String(r.photo).startsWith('data:image/'));
 
         return `
           <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 shadow-sm border ${isSafe ? 'border-slate-200 dark:border-slate-800' : 'border-red-500 dark:border-red-500 bg-red-50/20'} flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition">
-            <div class="space-y-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="font-bold text-base">${safeStore}</span>
-                <span class="text-[11px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">${safePlatform}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full ${isSafe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'} font-semibold">
-                  ${isSafe ? '✅ 符合退稅資格' : '❌ 觸發連坐：整張失效'}
-                </span>
+            <div class="flex items-start gap-3.5">
+              <!-- 收據縮圖或補拍按鈕 -->
+              ${hasPhoto ? `
+                <button type="button" onclick="openPhotoModal(${itemId})" class="relative group shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-sm">
+                  <img src="${r.photo}" alt="收據縮圖" class="w-full h-full object-cover" />
+                  <span class="absolute inset-0 bg-black/40 text-white text-[10px] font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition">🔍 放大</span>
+                </button>
+              ` : `
+                <button type="button" onclick="triggerReuploadPhoto(${itemId})" class="shrink-0 w-16 h-16 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-400 transition text-[11px] gap-0.5">
+                  <span class="text-base">📷</span>
+                  <span>補拍收據</span>
+                </button>
+              `}
+
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-bold text-base">${safeStore}</span>
+                  <span class="text-[11px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">${safePlatform}</span>
+                  <span class="text-xs px-2 py-0.5 rounded-full ${isSafe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'} font-semibold">
+                    ${isSafe ? '✅ 符合退稅資格' : '❌ 觸發連坐：整張失效'}
+                  </span>
+                </div>
+                ${safeReceiptNo ? `<p class="text-xs font-mono text-indigo-600 dark:text-indigo-400">🧾 單號：${safeReceiptNo}</p>` : ''}
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                  購買日：${safeDateStr} ｜ 90天出境期限：<strong>${deadlineStr}</strong>
+                </p>
+                <p class="text-sm font-semibold">
+                  實付含稅：¥${inAmountNum.toLocaleString()}
+                  <span class="${isSafe ? 'text-emerald-600 dark:text-emerald-400' : 'line-through text-red-500'} ml-2">
+                    (預估退 ¥${refundNum.toLocaleString()})
+                  </span>
+                </p>
               </div>
-              <p class="text-xs text-slate-500 dark:text-slate-400">
-                購買日：${safeDateStr} ｜ 90天出境期限：<strong>${deadlineStr}</strong>
-              </p>
-              <p class="text-sm font-semibold">
-                實付含稅：¥${inAmountNum.toLocaleString()}
-                <span class="${isSafe ? 'text-emerald-600 dark:text-emerald-400' : 'line-through text-red-500'} ml-2">
-                  (預估退 ¥${refundNum.toLocaleString()})
-                </span>
-              </p>
             </div>
 
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 text-xs">
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 text-xs">
               <label class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 cursor-pointer select-none">
                 <input type="checkbox" ${r.unopened ? 'checked' : ''} onchange="toggleReceiptCheck(${itemId}, 'unopened')" class="accent-indigo-600 w-4 h-4" />
                 <span>境內未拆封</span>
